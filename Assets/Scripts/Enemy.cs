@@ -6,14 +6,14 @@ public class Enemy : Mover
 {
     // exp
     public int xpValue = 1;
-    
+
     public float triggerLenght = 1;
     public float chaseLenght = 5;
     private bool chasing;
     private bool collidingWithPlayer;
     private Transform playerTransform;
     private Vector3 startingPosition;
-
+    private Animator anim;
     // HitBox
     public ContactFilter2D filter;
     private BoxCollider2D hitbox;

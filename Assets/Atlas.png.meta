@@ -1915,6 +1915,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: enemy_1
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 96
+        width: 20
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1cfdca2115c69004594952b5080ac100
+      internalID: 1938796453
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -1939,6 +1960,7 @@ TextureImporter:
       crate_2: -2043719361
       crate_3: 1208052023
       enemy_0: -1730067640
+      enemy_1: 1938796453
       floor_0: -774961044
       floor_1: 398761647
       floor_10: 1422151188

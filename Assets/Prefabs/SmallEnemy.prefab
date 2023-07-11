@@ -255,7 +255,7 @@ MonoBehaviour:
   pushRecoverySpeed: 0.2
   xpValue: 1
   triggerLenght: 0.4
-  chaseLenght: 1
+  chaseLenght: 1.5
   filter:
     useTriggers: 0
     useLayerMask: 0
