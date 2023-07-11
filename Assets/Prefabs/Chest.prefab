@@ -158,4 +158,4 @@ MonoBehaviour:
     minNormalAngle: 0
     maxNormalAngle: 0
   emptyChest: {fileID: 841279098, guid: 9b07a4bda71459443b538ec3d20ee1f5, type: 3}
-  pesosAmount: 13
+  pesosAmount: 15

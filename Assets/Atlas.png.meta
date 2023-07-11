@@ -1181,7 +1181,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: chest_0
+      name: menu_0
       rect:
         serializedVersion: 2
         x: 224
@@ -1924,7 +1924,7 @@ TextureImporter:
         width: 20
         height: 21
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1949,7 +1949,6 @@ TextureImporter:
     nameFileIdTable:
       Player_0: 419765397
       Player_1: -1593641990
-      chest_0: -62355994
       chest_1: 445273473
       chest_2: -14022400
       chest_3: -384595318
@@ -1988,6 +1987,7 @@ TextureImporter:
       healingfountain_0: 1555807160
       healingfountain_1: 1808468861
       healingfountain_2: 1792261847
+      menu_0: -62355994
       pilarWall_0: 1099499919
       pilarWall_1: -1277013754
       pilarWall_2: -901582279

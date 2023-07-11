@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
 
     // References
     public player player;
-    // public weapon weapon...
+    public Weapon weapon;
     public FloatingTextManager floatingTextManager;
 
     // Logic
@@ -41,6 +41,8 @@ public class GameManager : MonoBehaviour
     {
         floatingTextManager.Show(msg, fontSize, color, position, motion, duration);
     }
+
+    // Upgrade Weapon
 
     // Save State
     /* What we need to do the Save State:
