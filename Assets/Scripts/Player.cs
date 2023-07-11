@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class player : Mover
 {
+
+
+    protected override void Start()
+    {
+        base.Start();
+        DontDestroyOnLoad(gameObject);
+    }
     private void FixedUpdate(){
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");

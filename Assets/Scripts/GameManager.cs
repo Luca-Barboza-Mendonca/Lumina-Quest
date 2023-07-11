@@ -75,5 +75,8 @@ public class GameManager : MonoBehaviour
         // Change the weapon level
 
         Debug.Log("LoadState");
+
+
+        player.transform.position = GameObject.Find("SpawnPoint").transform.position;
     }
 }
