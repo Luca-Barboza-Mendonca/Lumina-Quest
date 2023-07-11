@@ -43,6 +43,18 @@ public class GameManager : MonoBehaviour
     }
 
     // Upgrade Weapon
+    public bool TryUpgradeWeapon(){
+        if (weaponPrices.Count <= weapon.weaponLevel){
+            return false;
+        }
+        if (pesos >= weaponPrices[weapon.weaponLevel]){
+            pesos -= weaponPrices[weapon.weaponLevel];
+            weapon.UpgradeWeapon();
+            return true;
+        }
+
+        return false;
+    }
 
     // Save State
     /* What we need to do the Save State:
@@ -58,7 +70,7 @@ public class GameManager : MonoBehaviour
         s += "0" + "|";
         s += pesos.ToString() + "|";
         s += experience.ToString() + "|";
-        s += "0";
+        s += weapon.weaponLevel.ToString();
 
         PlayerPrefs.SetString("SaveState", s);
     }
@@ -75,6 +87,7 @@ public class GameManager : MonoBehaviour
         pesos = int.Parse(data[1]);
         experience = int.Parse(data[2]);
         // Change the weapon level
+        weapon.SetWeaponLevel(int.Parse(data[3]));
 
         Debug.Log("LoadState");
 

@@ -11,17 +11,27 @@ public class CharacterMenu : MonoBehaviour
 
     public Image weaponSprite;
     public RectTransform xpBar;
+    private void Start()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
 
     // Weapon Upgrade
     public void OnUpgradeClick(){
         // Game manager shenanigans to change weapon
+        if (GameManager.instance.TryUpgradeWeapon()){
+            UpdateMenu();
+        }
     }
 
     // Update char info
     public void UpdateMenu(){
         // game mang
-        weaponSprite.sprite = GameManager.instance.weaponSprites[0];
-        upgradeCostText.text = "Not Implemented";
+        weaponSprite.sprite = GameManager.instance.weaponSprites[GameManager.instance.weapon.weaponLevel];
+        if (GameManager.instance.weapon.weaponLevel == GameManager.instance.weaponPrices.Count)
+            upgradeCostText.text = "MAX";
+        else
+            upgradeCostText.text = GameManager.instance.weaponPrices[GameManager.instance.weapon.weaponLevel].ToString();
 
         // Meta
         hitpointText.text = GameManager.instance.player.hitpoint.ToString();
