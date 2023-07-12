@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class player : Mover
 {
-
-
     protected override void Start()
     {
         base.Start();
@@ -16,5 +14,9 @@ public class player : Mover
         float y = Input.GetAxisRaw("Vertical");
 
         UpdateMotor(new Vector3(x, y, 0));
+    }
+
+    protected override void Death(){
+        // kill the player
     }
 }
