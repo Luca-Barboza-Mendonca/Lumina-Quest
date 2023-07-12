@@ -10,22 +10,25 @@ public class Fighter : MonoBehaviour
 
     protected float immuneTime = 1.0f;
     protected float lastImmune;
+    public bool isImmune = false;
 
     protected Vector3 pushDirection;
 
     protected virtual void ReceiveDamage(Damage dmg){
-        if (Time.time - lastImmune > immuneTime){
-            lastImmune = Time.time;
-            hitpoint -= dmg.damageAmount;
-            pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
+        if (!isImmune){
+            if (Time.time - lastImmune > immuneTime){
+                lastImmune = Time.time;
+                hitpoint -= dmg.damageAmount;
+                pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
 
-            
- 
-            GameManager.instance.ShowText("-" + dmg.damageAmount.ToString(), 2500, Color.red, transform.position, Vector3.zero, 0.5f);
+                
+    
+                GameManager.instance.ShowText("-" + dmg.damageAmount.ToString(), 2500, Color.red, transform.position, Vector3.zero, 0.5f);
 
-            if (hitpoint <= 0){
-                hitpoint = 0;
-                Death();
+                if (hitpoint <= 0){
+                    hitpoint = 0;
+                    Death();
+                }
             }
         }
     }

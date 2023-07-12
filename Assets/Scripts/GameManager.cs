@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
     public player player;
     public Weapon weapon;
     public FloatingTextManager floatingTextManager;
+    public Animator deathMenuAnim;
 
     // Logic
     public int pesos;
@@ -54,6 +55,14 @@ public class GameManager : MonoBehaviour
         }
 
         return false;
+    }
+
+    // Death Menu and Respawn
+    public void Respawn() {
+        deathMenuAnim.SetTrigger("Hide");
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Dungeon1");
+        player.Respawn();
+
     }
 
     // Save State
