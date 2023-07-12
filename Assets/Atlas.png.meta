@@ -1936,6 +1936,48 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: Boss_0
+      rect:
+        serializedVersion: 2
+        x: 158
+        y: 48
+        width: 37
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 001038555e1fe1643819856f1f05f359
+      internalID: 434336203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: fireball_0
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 31
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 66406bc282faa6e45824632f12efc67b
+      internalID: 1229628654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -1947,6 +1989,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      Boss_0: 434336203
       Player_0: 419765397
       Player_1: -1593641990
       chest_1: 445273473
@@ -1960,6 +2003,7 @@ TextureImporter:
       crate_3: 1208052023
       enemy_0: -1730067640
       enemy_1: 1938796453
+      fireball_0: 1229628654
       floor_0: -774961044
       floor_1: 398761647
       floor_10: 1422151188
