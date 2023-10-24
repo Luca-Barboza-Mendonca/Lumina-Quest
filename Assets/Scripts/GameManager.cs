@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using JsonUtility;
 
 public class GameManager : MonoBehaviour
 {
@@ -75,6 +76,11 @@ public class GameManager : MonoBehaviour
     public void SaveState()
     {
         string s = "";
+        PlayerData playerData = new PlayerData();
+        playerData.pesos = pesos;
+        playerData.experience = experience;
+        playerData.weaponLevel = weapon.weaponLevel;
+        string savePlayerData = JsonUtility(playerData);
 
         s += "0" + "|";
         s += pesos.ToString() + "|";
