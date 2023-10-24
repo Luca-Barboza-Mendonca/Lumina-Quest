@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 using UnityEngine.SceneManagement;
-using JsonUtility;
 
 public class GameManager : MonoBehaviour
 {
+    private PlayerData playerData;
+    private string saveFilePath;
     public static GameManager instance;
     private void Awake()
     {   
@@ -16,7 +18,7 @@ public class GameManager : MonoBehaviour
         }
 
         //PlayerPrefs.DeleteAll();
-
+        saveFilePath = Application.persistentDataPath + "/playerSave.json";
         instance = this;
         SceneManager.sceneLoaded += LoadState;
         DontDestroyOnLoad(gameObject);
@@ -75,34 +77,52 @@ public class GameManager : MonoBehaviour
     */
     public void SaveState()
     {
-        string s = "";
         PlayerData playerData = new PlayerData();
         playerData.pesos = pesos;
         playerData.experience = experience;
         playerData.weaponLevel = weapon.weaponLevel;
-        string savePlayerData = JsonUtility(playerData);
+        string savePlayerData = JsonUtility.ToJson(playerData);
+        File.WriteAllText(saveFilePath , savePlayerData);
 
-        s += "0" + "|";
-        s += pesos.ToString() + "|";
-        s += experience.ToString() + "|";
-        s += weapon.weaponLevel.ToString();
+        // string s = "";
 
-        PlayerPrefs.SetString("SaveState", s);
+        // s += "0" + "|";
+        // s += pesos.ToString() + "|";
+        // s += experience.ToString() + "|";
+        // s += weapon.weaponLevel.ToString();
+
+        // PlayerPrefs.SetString("SaveState", s);
     }
 
     public void LoadState(Scene s, LoadSceneMode mode)
     {
-        if(!PlayerPrefs.HasKey("SaveState"))
-            return;
+        // if(!PlayerPrefs.HasKey("SaveState"))
+        //     return;
 
-        string[] data = PlayerPrefs.GetString("SaveState").Split('|');
-        // Example of data (without split): 0|10|15|2
+        // string[] data = PlayerPrefs.GetString("SaveState").Split('|');
+        // // Example of data (without split): 0|10|15|2
 
-        // Change player skin
-        pesos = int.Parse(data[1]);
-        experience = int.Parse(data[2]);
-        // Change the weapon level
-        weapon.SetWeaponLevel(int.Parse(data[3]));
+        // // Change player skin
+        // pesos = int.Parse(data[1]);
+        // experience = int.Parse(data[2]);
+        // // Change the weapon level
+        // weapon.SetWeaponLevel(int.Parse(data[3]));
+
+        if (File.Exists(saveFilePath))
+        {
+            string loadPlayerData = File.ReadAllText(saveFilePath);
+            playerData = JsonUtility.FromJson<PlayerData>(loadPlayerData);
+
+            pesos = playerData.pesos;
+            experience = playerData.experience;
+            weapon.SetWeaponLevel(playerData.weaponLevel);
+        }
+        else
+        {
+            pesos = 0;
+            experience = 0;
+            weapon.SetWeaponLevel(0);
+        }
 
         Debug.Log("LoadState");
 
