@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using System.IO;
 using UnityEngine.SceneManagement;
+using UnityEngine.Networking;
+using Newtonsoft.Json;
 
 public class GameManager : MonoBehaviour
 {
@@ -84,6 +87,8 @@ public class GameManager : MonoBehaviour
         string savePlayerData = JsonUtility.ToJson(playerData);
         File.WriteAllText(saveFilePath , savePlayerData);
 
+        Debug.Log("Player Data saved at" + saveFilePath);
+
         // string s = "";
 
         // s += "0" + "|";
@@ -93,6 +98,20 @@ public class GameManager : MonoBehaviour
 
         // PlayerPrefs.SetString("SaveState", s);
     }
+
+    // private IEnumerator sendPlayerDataToServer(){
+    //     string uriSend = "";
+
+    //     using UnityWebRequest webRequest = new UnityWebRequest(uriSend, "POST");
+    //     webRequest.SetRequestHeader("Content-Type", "application/json");
+
+
+    //     var jsonDataToSend = JsonConvert.SerializeObject(playerData);
+    //     var _dataJson = jsonDataToSend;
+    //     string text = File.ReadAllText(saveFilePath);
+    //     byte[] rawPlayerData = Encoding.UTF8.GetBytes(_dataJson);
+    //     webRequest.uploadHandler = new UploadHandlerRaw(rawPlayerData);
+    // }
 
     public void LoadState(Scene s, LoadSceneMode mode)
     {
