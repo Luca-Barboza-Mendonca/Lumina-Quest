@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System;
+using System.Threading;
 
 public class SocketManager : MonoBehaviour
 {
@@ -16,14 +17,32 @@ public class SocketManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        DontDestroyOnLoad(gameObject);
         string serverAddress = "localhost";
         int serverPort = 65439;
 
-        Debug.Log("Socket connected to server");
+        
 
-        playerDataSocket.id = "1";
+        // playerDataSocket.id = "1";
         socket = new TcpClient(serverAddress, serverPort);
 
+        var networkStream = socket.GetStream();
+
+        Thread receiveThread = new Thread(() =>
+        {
+            string receivedData = ReceiveData(networkStream);
+            if (receivedData.StartsWith("id_", StringComparison.OrdinalIgnoreCase))
+            {
+                const string prefix = "id_";
+                string clientId = receivedData.Substring(prefix.Length);
+                playerDataSocket.id = clientId;
+            }
+            Debug.Log($"Received data from server: {receivedData}");
+        });
+        receiveThread.Start();
+
+
+        Debug.Log("Socket connected to server");
     }
 
     // Update is called once per frame
@@ -75,6 +94,27 @@ public class SocketManager : MonoBehaviour
     {
         byte[] dataBytes = Encoding.UTF8.GetBytes(data);
         networkStream.Write(dataBytes, 0, dataBytes.Length);
+    }
+
+    static string ReceiveData(NetworkStream networkStream)
+    {
+        try
+        {
+            byte[] buffer = new byte[1024];
+            int bytesRead = networkStream.Read(buffer, 0, buffer.Length);
+
+            if (bytesRead > 0)
+            {
+                return Encoding.UTF8.GetString(buffer, 0, bytesRead);
+            }
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error receiving data: {ex.Message}");
+            return null;
+        }
     }
 
     // private void OnDestroy()
