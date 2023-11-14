@@ -10,11 +10,11 @@ using System.Linq;
 
 public class SocketManager : MonoBehaviour
 {
-    TcpClient socket;
+    public TcpClient socket;
     public player player;
     public GameManager gameManager;
     public PlayerData playerDataSocket;
-    public GameObject foreign_player;
+    public ForeignPlayer foreign_player;
 
     // Start is called before the first frame update
     void Awake()
@@ -88,7 +88,13 @@ public class SocketManager : MonoBehaviour
                     if (!gameManager.activePlayers.Contains(playerId))
                     {
                         gameManager.activePlayers.Add(playerId);
-                        Instantiate(foreign_player, new Vector3(xPos, yPos, 0), Quaternion.identity);
+                        // THE CODE BELOW IS UNTESTED AND WILL BREAK ALL MULTIPLAYER FUNCTIONALITY IF IT'S WRONG
+                        ForeignPlayer newPlayer;
+                        newPlayer = Instantiate(foreign_player, new Vector3(xPos, yPos, 0), Quaternion.identity);
+                        gameManager.foreignPlayers.Add(playerId, newPlayer);
+                    }
+                    else if (gameManager.activePlayers.Contains(playerId)){
+                        gameManager.foreignPlayers[playerId].UpdateMotor(new Vector3(xPos, yPos, 0));
                     }
                 }
             }
@@ -129,7 +135,7 @@ public class SocketManager : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error receiving data: {ex.Message}");
+            Debug.Log($"Error receiving data: {ex.Message}");
             return null;
         }
     }

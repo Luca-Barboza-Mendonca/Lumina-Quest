@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 public class GameManager : MonoBehaviour
 {
     public List<string> activePlayers = new List<string>();
+    public Dictionary<string, ForeignPlayer> foreignPlayers = new Dictionary<string, ForeignPlayer>();
     private PlayerData playerData;
     private string saveFilePath;
     public static GameManager instance;
