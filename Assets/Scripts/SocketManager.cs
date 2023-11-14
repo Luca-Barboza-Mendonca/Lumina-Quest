@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 using System.Net.Sockets;
 using System.Text;
 using System;
 using System.Threading;
+using System.Linq;
 
 public class SocketManager : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class SocketManager : MonoBehaviour
     public player player;
     public GameManager gameManager;
     public PlayerData playerDataSocket;
+    public GameObject foreign_player;
 
     // Start is called before the first frame update
     void Awake()
@@ -74,7 +76,21 @@ public class SocketManager : MonoBehaviour
                 SendData(networkStream, playerDataJSON);
                 // Below we should receive all player data from the server and render other players
                 string receivedData = ReceiveData(networkStream);
-                Debug.Log($"Received data from server: {receivedData}");
+                var jsonObject = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(receivedData);
+                foreach(var entry in jsonObject)
+                {
+                    var dataForPlayer = entry.Value;
+                    string playerId = dataForPlayer["id"].ToString();
+                    float xPos = Convert.ToSingle(dataForPlayer["xPos"]);
+                    float yPos = Convert.ToSingle(dataForPlayer["yPos"]);
+                    Debug.Log($"Player {playerId} is at X: {xPos} Y: {yPos}");
+
+                    if (!gameManager.activePlayers.Contains(playerId))
+                    {
+                        gameManager.activePlayers.Add(playerId);
+                        Instantiate(foreign_player, new Vector3(xPos, yPos, 0), Quaternion.identity);
+                    }
+                }
             }
             catch (Exception ex)
             {

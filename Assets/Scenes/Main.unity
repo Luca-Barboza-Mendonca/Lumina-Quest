@@ -765,6 +765,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 761353503}
   gameManager: {fileID: 558811094}
+  foreign_player: {fileID: 8649149128481294234, guid: c395f7fb3681ac04c88aaa0211177b21, type: 3}
 --- !u!4 &289895693
 Transform:
   m_ObjectHideFlags: 0
