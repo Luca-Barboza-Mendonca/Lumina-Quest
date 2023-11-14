@@ -19,7 +19,7 @@ public class SocketManager : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
         string serverAddress = "localhost";
-        int serverPort = 65439;
+        int serverPort = 65442;
 
         
 
@@ -28,18 +28,16 @@ public class SocketManager : MonoBehaviour
 
         var networkStream = socket.GetStream();
 
-        Thread receiveThread = new Thread(() =>
+
+        string receivedData = ReceiveData(networkStream);
+        if (receivedData.StartsWith("id_", StringComparison.OrdinalIgnoreCase))
         {
-            string receivedData = ReceiveData(networkStream);
-            if (receivedData.StartsWith("id_", StringComparison.OrdinalIgnoreCase))
-            {
-                const string prefix = "id_";
-                string clientId = receivedData.Substring(prefix.Length);
-                playerDataSocket.id = clientId;
-            }
-            Debug.Log($"Received data from server: {receivedData}");
-        });
-        receiveThread.Start();
+            const string prefix = "id_";
+            string clientId = receivedData.Substring(prefix.Length);
+            playerDataSocket.id = clientId;
+        }
+        Debug.Log($"Received data from server: {receivedData}");
+
 
 
         Debug.Log("Socket connected to server");
@@ -74,6 +72,9 @@ public class SocketManager : MonoBehaviour
             try{
                 var networkStream = socket.GetStream();
                 SendData(networkStream, playerDataJSON);
+                // Below we should receive all player data from the server and render other players
+                string receivedData = ReceiveData(networkStream);
+                Debug.Log($"Received data from server: {receivedData}");
             }
             catch (Exception ex)
             {
