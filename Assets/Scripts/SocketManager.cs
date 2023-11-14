@@ -10,6 +10,7 @@ public class SocketManager : MonoBehaviour
 {
     TcpClient socket;
     public player player;
+    public GameManager gameManager;
     public PlayerData playerDataSocket;
 
     // Start is called before the first frame update
@@ -40,6 +41,10 @@ public class SocketManager : MonoBehaviour
             //Grab player current position and rotation data
             playerDataSocket.xPos = player.transform.position.x;
             playerDataSocket.yPos = player.transform.position.y;
+            playerDataSocket.pesos = gameManager.pesos;
+            playerDataSocket.experience = gameManager.experience;
+            playerDataSocket.weaponLevel = gameManager.weapon.weaponLevel;
+
 
             System.DateTime epochStart =  new System.DateTime(1970, 1, 1, 8, 0, 0, System.DateTimeKind.Utc);
             double timestamp = (System.DateTime.UtcNow - epochStart).TotalSeconds;
@@ -49,7 +54,7 @@ public class SocketManager : MonoBehaviour
             string playerDataJSON = JsonUtility.ToJson(playerDataSocket);
             try{
                 var networkStream = socket.GetStream();
-            SendData(networkStream, playerDataJSON);
+                SendData(networkStream, playerDataJSON);
             }
             catch (Exception ex)
             {

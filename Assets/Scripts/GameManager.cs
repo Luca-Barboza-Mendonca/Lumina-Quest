@@ -27,6 +27,14 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    private void Update()
+    {
+        PlayerData playerData = new PlayerData();
+        playerData.pesos = pesos;
+        playerData.experience = experience;
+        playerData.weaponLevel = weapon.weaponLevel;
+    }
+
     // Resources
     public List<Sprite> playerSprites;
     public List<Sprite> weaponSprites;
