@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class player : Mover
 {
-    private bool isAlive = true;
+    public int isAlive = 1;
 
     protected override void Start()
     {
@@ -14,20 +14,20 @@ public class player : Mover
     private void FixedUpdate(){
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
-        if (isAlive)
+        if (isAlive == 1)
             UpdateMotor(new Vector3(x, y, 0));
     }
 
     protected override void Death(){
         // kill the player
-        isAlive = false;
+        isAlive = 0;
         isImmune = true;
         GameManager.instance.deathMenuAnim.SetTrigger("Show");
     }
 
     public void Respawn() {
         hitpoint = maxhitpoint;
-        isAlive = true;
+        isAlive = 1;
         lastImmune = Time.time;
         pushDirection = Vector3.zero;
         isImmune = false;

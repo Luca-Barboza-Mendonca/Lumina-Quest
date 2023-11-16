@@ -7,10 +7,16 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
 
+public struct ForeignPlayerStruct {
+    public string playerId;
+    public GameObject fPlayer;
+}
+
 public class GameManager : MonoBehaviour
 {
     public List<string> activePlayers = new List<string>();
-    public Dictionary<string, ForeignPlayer> foreignPlayers = new Dictionary<string, ForeignPlayer>();
+    public List<ForeignPlayerStruct> foreignPlayers = new List<ForeignPlayerStruct>();
+    // public Dictionary<string, GameObject> foreignPlayers = new Dictionary<string, GameObject>();
     private PlayerData playerData;
     private string saveFilePath;
     public static GameManager instance;
@@ -29,13 +35,7 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    private void Update()
-    {
-        PlayerData playerData = new PlayerData();
-        playerData.pesos = pesos;
-        playerData.experience = experience;
-        playerData.weaponLevel = weapon.weaponLevel;
-    }
+
 
     // Resources
     public List<Sprite> playerSprites;
@@ -53,10 +53,34 @@ public class GameManager : MonoBehaviour
     public int pesos;
     public int experience;
 
+    private void Update()
+    {
+        PlayerData playerData = new PlayerData();
+        playerData.pesos = pesos;
+        playerData.experience = experience;
+        playerData.weaponLevel = weapon.weaponLevel;
+        playerData.hitpoints = player.hitpoint;
+        playerData.isAlive = player.isAlive;
+    }
+
     // Floating Text
     public void ShowText(string msg, int fontSize, Color color, Vector3 position, Vector3 motion, float duration)
     {
         floatingTextManager.Show(msg, fontSize, color, position, motion, duration);
+    }
+
+    public int FindPlayerComponentById(string id)
+    {
+        int counter = 0;
+        foreach(var entry in foreignPlayers)
+        {
+            if (entry.playerId == id)
+            {
+                return counter;
+            }
+            counter++;
+        }
+        return -1;
     }
 
     // Upgrade Weapon

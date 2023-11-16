@@ -14,7 +14,7 @@ public class SocketManager : MonoBehaviour
     public player player;
     public GameManager gameManager;
     public PlayerData playerDataSocket;
-    public ForeignPlayer foreign_player;
+    public GameObject foreign_player;
 
     // Start is called before the first frame update
     void Awake()
@@ -48,7 +48,6 @@ public class SocketManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log(player.transform.position);
         if (socket == null)
         {
             return;
@@ -63,6 +62,8 @@ public class SocketManager : MonoBehaviour
             playerDataSocket.pesos = gameManager.pesos;
             playerDataSocket.experience = gameManager.experience;
             playerDataSocket.weaponLevel = gameManager.weapon.weaponLevel;
+            playerDataSocket.hitpoints = player.hitpoint;
+            playerDataSocket.isAlive = player.isAlive;
 
 
             System.DateTime epochStart =  new System.DateTime(1970, 1, 1, 8, 0, 0, System.DateTimeKind.Utc);
@@ -71,46 +72,67 @@ public class SocketManager : MonoBehaviour
             playerDataSocket.timestamp = timestamp;
 
             string playerDataJSON = JsonUtility.ToJson(playerDataSocket);
-            try{
-                var networkStream = socket.GetStream();
-                SendData(networkStream, playerDataJSON);
-                // Below we should receive all player data from the server and render other players
-                string receivedData = ReceiveData(networkStream);
-                var jsonObject = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(receivedData);
-                foreach(var entry in jsonObject)
-                {
-                    var dataForPlayer = entry.Value;
-                    string playerId = dataForPlayer["id"].ToString();
-                    float xPos = Convert.ToSingle(dataForPlayer["xPos"]);
-                    float yPos = Convert.ToSingle(dataForPlayer["yPos"]);
-                    Debug.Log($"Player {playerId} is at X: {xPos} Y: {yPos}");
+            //try{
+            var networkStream = socket.GetStream();
+            SendData(networkStream, playerDataJSON);
+            // Below we should receive all player data from the server and render other players
+            string receivedData = ReceiveData(networkStream);
+            var jsonObject = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(receivedData);
+            foreach(var entry in jsonObject)
+            {
+                var dataForPlayer = entry.Value;
+                string playerId = dataForPlayer["id"].ToString();
+                float xPos = Convert.ToSingle(dataForPlayer["xPos"]);
+                float yPos = Convert.ToSingle(dataForPlayer["yPos"]);
+                int fplayerIsAlive = Convert.ToInt32(dataForPlayer["isAlive"]);
+                int fplayerhitpoint = Convert.ToInt32(dataForPlayer["hitpoints"]);
+                // Debug.Log($"Player {playerId} is at X: {xPos} Y: {yPos}");
+                int playerIndex = gameManager.FindPlayerComponentById(playerId);
 
-                    if (!gameManager.activePlayers.Contains(playerId))
-                    {
-                        gameManager.activePlayers.Add(playerId);
-                        // THE CODE BELOW IS UNTESTED AND WILL BREAK ALL MULTIPLAYER FUNCTIONALITY IF IT'S WRONG
-                        ForeignPlayer newPlayer;
-                        newPlayer = Instantiate(foreign_player, new Vector3(xPos, yPos, 0), Quaternion.identity);
-                        gameManager.foreignPlayers.Add(playerId, newPlayer);
+                if (playerId == playerDataSocket.id)
+                {
+                    // Don't render yourself
+                    player.hitpoint = fplayerhitpoint;
+                    continue;
+                }
+
+                if (!gameManager.activePlayers.Contains(playerId))
+                {
+                    gameManager.activePlayers.Add(playerId);
+                    // THE CODE BELOW IS UNTESTED AND WILL BREAK ALL MULTIPLAYER FUNCTIONALITY IF IT'S WRONG
+                    GameObject newPlayer;
+                    newPlayer = Instantiate(foreign_player, new Vector3(xPos, yPos, 0), Quaternion.identity);
+                    newPlayer.GetComponent<ForeignPlayer>().playerId = playerId;
+                    ForeignPlayerStruct newForeignPlayer;
+                    newForeignPlayer.playerId = playerId;
+                    newForeignPlayer.fPlayer = newPlayer;
+                    gameManager.foreignPlayers.Add(newForeignPlayer);
+                    Debug.Log($"Added player {playerId} to foreign players");
+                }
+                else if (playerIndex != -1)
+                {
+                    // Very wordy but should do the trick
+                    ForeignPlayer fplayercomponent = gameManager.foreignPlayers[playerIndex].fPlayer.GetComponent<ForeignPlayer>();
+                    //gameManager.foreignPlayers[playerIndex].fPlayer.GetComponent<ForeignPlayer>().UpdateMotor(new Vector3(xPos, yPos, 0));
+                    if (fplayercomponent.isAlive == 1){
+                        gameManager.foreignPlayers[playerIndex].fPlayer.GetComponent<Transform>().position = new Vector3(xPos, yPos, 0);
+                        fplayercomponent.isAlive = fplayerIsAlive;
+                        fplayercomponent.hitpoint = fplayerhitpoint;
                     }
-                    else if (gameManager.activePlayers.Contains(playerId)){
-                        gameManager.foreignPlayers[playerId].UpdateMotor(new Vector3(xPos, yPos, 0));
-                    }
+                    // else {
+                           // Remove it from the game manager references and destroy it
+                    //     Destroy(gameManager.foreignPlayers[playerIndex].fPlayer);
+                    // }
+                    
                 }
             }
-            catch (Exception ex)
-            {
-                Debug.Log($"Error: {ex.Message}");
-            }
+            //}
+            // catch (Exception ex)
+            // {
+            //     Debug.Log($"Error: {ex.Message}");
+            // }
             
-            // socket.Send(playerDataJSON); 
         }
-
-        // if (Input.GetKeyDown(KeyCode.M))
-        // {
-        //     string messageJSON = "{\"message\": \"Some Message From Client\"}";
-        //     socket.Send(messageJSON);
-        // }
     }
 
     static void SendData(NetworkStream networkStream, string data)

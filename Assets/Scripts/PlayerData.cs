@@ -13,4 +13,6 @@ public struct PlayerData
     public int pesos;
     public int experience;
     public int weaponLevel;
+    public int hitpoints;
+    public int isAlive;
 }
