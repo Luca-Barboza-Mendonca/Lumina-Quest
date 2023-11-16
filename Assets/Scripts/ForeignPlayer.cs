@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
+using System.Net.Sockets;
+using System.Text;
+using System;
 
 public class ForeignPlayer : Mover
 {
 
-    //public SocketManager socketManager;
+    public SocketManager socketManager;
     public string playerId;
     public int isAlive;
     public ForeignPlayerWeapon foreignPlayerWeapon;
@@ -15,13 +19,27 @@ public class ForeignPlayer : Mover
         base.Start();
         isAlive = 1;
         DontDestroyOnLoad(gameObject);
-        //socketManager = GameObject.Find("SocketManager").GetComponent<SocketManager>();
+        socketManager = GameObject.Find("SocketManager").GetComponent<SocketManager>();
     }
 
     // Update is called once per frame
     void Update()
     {  
-               
+        
+    }
+
+    protected override void ReceiveDamage(Damage dmg)
+    {
+        base.ReceiveDamage(dmg);
+        var socket = socketManager.socket;
+        var networkStream = socket.GetStream();
+        DamageRequest newdmgRequest = new DamageRequest();
+        newdmgRequest.hitpoints = hitpoint;
+        newdmgRequest.request = "damage";
+        newdmgRequest.id = playerId;
+
+        var jsonDataToSend = JsonUtility.ToJson(newdmgRequest);
+        SendData(networkStream , jsonDataToSend);
     }
 
     protected override void Death()
@@ -29,4 +47,9 @@ public class ForeignPlayer : Mover
         isAlive = 0;
     }
 
+    static void SendData(NetworkStream networkStream, string data)
+    {
+        byte[] dataBytes = Encoding.UTF8.GetBytes(data);
+        networkStream.Write(dataBytes, 0, dataBytes.Length);
+    }
 }

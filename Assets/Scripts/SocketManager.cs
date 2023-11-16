@@ -57,6 +57,7 @@ public class SocketManager : MonoBehaviour
         if (player != null && playerDataSocket.id != "")
         {
             //Grab player current position and rotation data
+            playerDataSocket.request = "playerdata";
             playerDataSocket.xPos = player.transform.position.x;
             playerDataSocket.yPos = player.transform.position.y;
             playerDataSocket.pesos = gameManager.pesos;
