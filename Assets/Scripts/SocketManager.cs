@@ -16,13 +16,14 @@ public class SocketManager : MonoBehaviour
     public PlayerData playerDataSocket;
     public GameObject foreign_player;
     public int swing = 0;
+    public int counter = 0;
 
     // Start is called before the first frame update
     void Awake()
     {
         DontDestroyOnLoad(gameObject);
         string serverAddress = "localhost";
-        int serverPort = 65448;
+        int serverPort = 65451;
 
         
 
@@ -44,6 +45,24 @@ public class SocketManager : MonoBehaviour
 
 
         Debug.Log("Socket connected to server");
+
+        playerDataSocket.request = "playerdata";
+        playerDataSocket.xPos = player.transform.position.x;
+        playerDataSocket.yPos = player.transform.position.y;
+        playerDataSocket.pesos = gameManager.pesos;
+        playerDataSocket.experience = gameManager.experience;
+        playerDataSocket.weaponLevel = gameManager.weapon.weaponLevel;
+        playerDataSocket.hitpoints = player.hitpoint;
+        playerDataSocket.isAlive = player.isAlive;
+        playerDataSocket.swing = swing;
+
+        System.DateTime epochStart =  new System.DateTime(1970, 1, 1, 8, 0, 0, System.DateTimeKind.Utc);
+        double timestamp = (System.DateTime.UtcNow - epochStart).TotalSeconds;
+        //Debug.Log(timestamp);
+        playerDataSocket.timestamp = timestamp;
+
+        string playerDataJSON = JsonUtility.ToJson(playerDataSocket);
+        SendData(networkStream, playerDataJSON);
     }
 
     // Update is called once per frame
@@ -65,21 +84,23 @@ public class SocketManager : MonoBehaviour
             playerDataSocket.experience = gameManager.experience;
             playerDataSocket.weaponLevel = gameManager.weapon.weaponLevel;
             playerDataSocket.hitpoints = player.hitpoint;
+              
             playerDataSocket.isAlive = player.isAlive;
             playerDataSocket.swing = swing;
 
 
             System.DateTime epochStart =  new System.DateTime(1970, 1, 1, 8, 0, 0, System.DateTimeKind.Utc);
             double timestamp = (System.DateTime.UtcNow - epochStart).TotalSeconds;
-            //Debug.Log(timestamp);
             playerDataSocket.timestamp = timestamp;
 
             string playerDataJSON = JsonUtility.ToJson(playerDataSocket);
-            //try{
             var networkStream = socket.GetStream();
-            SendData(networkStream, playerDataJSON);
-            swing = 0;
-            // Below we should receive all player data from the server and render other players
+            
+            if (counter%10 == 0)
+            {
+                swing = 0;
+            }
+                
             string receivedData = ReceiveData(networkStream);
             var jsonObject = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(receivedData);
             foreach(var entry in jsonObject)
@@ -97,8 +118,13 @@ public class SocketManager : MonoBehaviour
 
                 if (playerId == playerDataSocket.id)
                 {
-                    // Don't render yourself
-                    player.hitpoint = fplayerhitpoint;
+                    Debug.Log($"Updating host hitpoints to {fplayerhitpoint}");
+                    if (counter%5 == 0)
+                    {
+                        player.hitpoint = fplayerhitpoint;
+                    }
+                    
+                    // Doesn't work for some reason
                     continue;
                 }
 
@@ -119,11 +145,10 @@ public class SocketManager : MonoBehaviour
                     gameManager.foreignPlayers.Add(newForeignPlayer);
                     Debug.Log($"Added player {playerId} to foreign players");
                 }
-                else if (playerIndex != -1)
+                else if (gameManager.activePlayers.Contains(playerId))
                 {
                     // Very wordy but should do the trick
                     ForeignPlayer fplayercomponent = gameManager.foreignPlayers[playerIndex].fPlayer.GetComponent<ForeignPlayer>();
-                    //gameManager.foreignPlayers[playerIndex].fPlayer.GetComponent<ForeignPlayer>().UpdateMotor(new Vector3(xPos, yPos, 0));
                     if (fplayercomponent.isAlive == 1){
                         gameManager.foreignPlayers[playerIndex].fPlayer.GetComponent<Transform>().position = new Vector3(xPos, yPos, 0);
                         fplayercomponent.isAlive = fplayerIsAlive;
@@ -141,13 +166,9 @@ public class SocketManager : MonoBehaviour
                     
                 }
             }
-            //}
-            // catch (Exception ex)
-            // {
-            //     Debug.Log($"Error: {ex.Message}");
-            // }
-            
+            SendData(networkStream, playerDataJSON);
         }
+        counter++;
     }
 
     static void SendData(NetworkStream networkStream, string data)
@@ -177,10 +198,4 @@ public class SocketManager : MonoBehaviour
         }
     }
 
-    // private void OnDestroy()
-    // {
-    //     //Close socket when exiting application
-    //     Debug.Log("Closing Connection");
-    //     socket.Close();
-    // }
 }

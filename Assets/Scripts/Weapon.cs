@@ -54,6 +54,7 @@ public class Weapon : Collidable
                 origin = transform.position,
                 pushForce = pushForce[weaponLevel]
             };
+            // This is fucking up pvp combat
             coll.SendMessage("ReceiveDamage", dmg);
             
         }
