@@ -766,6 +766,7 @@ MonoBehaviour:
   player: {fileID: 761353503}
   gameManager: {fileID: 558811094}
   foreign_player: {fileID: 3581843333965474085, guid: 8ada33d73ff33874aaad41353306d424, type: 3}
+  swing: 0
 --- !u!4 &289895693
 Transform:
   m_ObjectHideFlags: 0
@@ -18201,6 +18202,10 @@ PrefabInstance:
       propertyPath: ySpeed
       value: 0.75
       objectReference: {fileID: 0}
+    - target: {fileID: 4949952578527066891, guid: c395f7fb3681ac04c88aaa0211177b21, type: 3}
+      propertyPath: socketManager
+      value: 
+      objectReference: {fileID: 289895692}
     - target: {fileID: 8649149128481294234, guid: c395f7fb3681ac04c88aaa0211177b21, type: 3}
       propertyPath: m_Name
       value: Player

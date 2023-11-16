@@ -16,4 +16,5 @@ public struct PlayerData
     public int weaponLevel;
     public int hitpoints;
     public int isAlive;
+    public int swing;
 }

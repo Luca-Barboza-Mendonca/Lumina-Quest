@@ -51,7 +51,7 @@ public class ForeignPlayerWeapon : Collidable
         
     }
 
-    private void Swing(){
+    public void Swing(){
         anim.SetTrigger("Swing");
     }
 

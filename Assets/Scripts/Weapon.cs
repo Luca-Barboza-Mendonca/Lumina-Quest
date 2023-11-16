@@ -11,6 +11,7 @@ public class Weapon : Collidable
     // Upgrade
     public int weaponLevel = 0;
     private SpriteRenderer spriteRenderer;
+    public SocketManager socketManager;
 
     // Swing
     private Animator anim;
@@ -36,6 +37,7 @@ public class Weapon : Collidable
             if (Time.time - lastSwing > cooldown){
                 lastSwing = Time.time;
                 Swing();
+                socketManager.swing = 1;
             }
         }
     }
@@ -60,6 +62,7 @@ public class Weapon : Collidable
 
     private void Swing(){
         anim.SetTrigger("Swing");
+        
     }
 
     public void UpgradeWeapon(){

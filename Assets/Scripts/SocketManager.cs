@@ -15,13 +15,14 @@ public class SocketManager : MonoBehaviour
     public GameManager gameManager;
     public PlayerData playerDataSocket;
     public GameObject foreign_player;
+    public int swing = 0;
 
     // Start is called before the first frame update
     void Awake()
     {
         DontDestroyOnLoad(gameObject);
         string serverAddress = "localhost";
-        int serverPort = 65442;
+        int serverPort = 65448;
 
         
 
@@ -65,6 +66,7 @@ public class SocketManager : MonoBehaviour
             playerDataSocket.weaponLevel = gameManager.weapon.weaponLevel;
             playerDataSocket.hitpoints = player.hitpoint;
             playerDataSocket.isAlive = player.isAlive;
+            playerDataSocket.swing = swing;
 
 
             System.DateTime epochStart =  new System.DateTime(1970, 1, 1, 8, 0, 0, System.DateTimeKind.Utc);
@@ -76,6 +78,7 @@ public class SocketManager : MonoBehaviour
             //try{
             var networkStream = socket.GetStream();
             SendData(networkStream, playerDataJSON);
+            swing = 0;
             // Below we should receive all player data from the server and render other players
             string receivedData = ReceiveData(networkStream);
             var jsonObject = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(receivedData);
@@ -88,6 +91,7 @@ public class SocketManager : MonoBehaviour
                 int fplayerIsAlive = Convert.ToInt32(dataForPlayer["isAlive"]);
                 int fplayerhitpoint = Convert.ToInt32(dataForPlayer["hitpoints"]);
                 int fplayerweapon = Convert.ToInt32(dataForPlayer["weaponLevel"]);
+                int fplayerSwing = Convert.ToInt32(dataForPlayer["swing"]);
                 // Debug.Log($"Player {playerId} is at X: {xPos} Y: {yPos}");
                 int playerIndex = gameManager.FindPlayerComponentById(playerId);
 
@@ -124,7 +128,11 @@ public class SocketManager : MonoBehaviour
                         gameManager.foreignPlayers[playerIndex].fPlayer.GetComponent<Transform>().position = new Vector3(xPos, yPos, 0);
                         fplayercomponent.isAlive = fplayerIsAlive;
                         fplayercomponent.hitpoint = fplayerhitpoint;
-                        fplayercomponent.foreignPlayerWeapon.SetWeaponLevel(fplayerweapon);
+                        fplayercomponent.foreignPlayerWeapon.SetWeaponLevel(fplayerweapon); 
+                        if (fplayerSwing == 1)
+                        {
+                            fplayercomponent.foreignPlayerWeapon.Swing();
+                        }
                     }
                     // else {
                            // Remove it from the game manager references and destroy it
