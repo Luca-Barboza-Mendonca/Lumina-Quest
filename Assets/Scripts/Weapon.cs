@@ -18,7 +18,7 @@ public class Weapon : Collidable
     private float lastSwing;
 
     private void Awake(){
-        spriteRenderer = GetComponent<SpriteRenderer>();  
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     protected override void Start()
@@ -48,7 +48,7 @@ public class Weapon : Collidable
             }
             
             Damage dmg = new Damage(){
-                damageAmount = damagePoint[weaponLevel],
+                damageAmount = damagePoint[weaponLevel], // Probably here
                 origin = transform.position,
                 pushForce = pushForce[weaponLevel]
             };

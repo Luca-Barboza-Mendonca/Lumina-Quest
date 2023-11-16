@@ -86,6 +86,7 @@ public class SocketManager : MonoBehaviour
                 float yPos = Convert.ToSingle(dataForPlayer["yPos"]);
                 int fplayerIsAlive = Convert.ToInt32(dataForPlayer["isAlive"]);
                 int fplayerhitpoint = Convert.ToInt32(dataForPlayer["hitpoints"]);
+                int fplayerweapon = Convert.ToInt32(dataForPlayer["weaponLevel"]);
                 // Debug.Log($"Player {playerId} is at X: {xPos} Y: {yPos}");
                 int playerIndex = gameManager.FindPlayerComponentById(playerId);
 
@@ -99,10 +100,14 @@ public class SocketManager : MonoBehaviour
                 if (!gameManager.activePlayers.Contains(playerId))
                 {
                     gameManager.activePlayers.Add(playerId);
-                    // THE CODE BELOW IS UNTESTED AND WILL BREAK ALL MULTIPLAYER FUNCTIONALITY IF IT'S WRONG
                     GameObject newPlayer;
+
                     newPlayer = Instantiate(foreign_player, new Vector3(xPos, yPos, 0), Quaternion.identity);
-                    newPlayer.GetComponent<ForeignPlayer>().playerId = playerId;
+
+                    ForeignPlayer newPlayerScript = newPlayer.GetComponent<ForeignPlayer>();
+                    newPlayerScript.playerId = playerId;
+                    newPlayerScript.foreignPlayerWeapon = newPlayer.GetComponentInChildren<ForeignPlayerWeapon>();
+
                     ForeignPlayerStruct newForeignPlayer;
                     newForeignPlayer.playerId = playerId;
                     newForeignPlayer.fPlayer = newPlayer;
@@ -118,6 +123,7 @@ public class SocketManager : MonoBehaviour
                         gameManager.foreignPlayers[playerIndex].fPlayer.GetComponent<Transform>().position = new Vector3(xPos, yPos, 0);
                         fplayercomponent.isAlive = fplayerIsAlive;
                         fplayercomponent.hitpoint = fplayerhitpoint;
+                        fplayercomponent.foreignPlayerWeapon.SetWeaponLevel(fplayerweapon);
                     }
                     // else {
                            // Remove it from the game manager references and destroy it
