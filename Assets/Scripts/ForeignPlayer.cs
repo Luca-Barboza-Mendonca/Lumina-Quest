@@ -28,19 +28,21 @@ public class ForeignPlayer : Mover
         
     }
 
-    protected override void ReceiveDamage(Damage dmg)
-    {
-        base.ReceiveDamage(dmg);
-        var socket = socketManager.socket;
-        var networkStream = socket.GetStream();
-        DamageRequest newdmgRequest = new DamageRequest();
-        newdmgRequest.hitpoints = hitpoint;
-        newdmgRequest.request = "damage";
-        newdmgRequest.id = playerId;
+    // protected override void ReceiveDamage(Damage dmg)
+    // {
+    //     base.ReceiveDamage(dmg);
+    //     if (Time.time - lastImmune > immuneTime){
+    //         var socket = socketManager.socket;
+    //         var networkStream = socket.GetStream();
+    //         DamageRequest newdmgRequest = new DamageRequest();
+    //         newdmgRequest.hitpoints = this.hitpoint;
+    //         newdmgRequest.request = "damage";
+    //         newdmgRequest.id = this.playerId;
 
-        var jsonDataToSend = JsonUtility.ToJson(newdmgRequest);
-        SendData(networkStream , jsonDataToSend);
-    }
+    //         var jsonDataToSend = JsonUtility.ToJson(newdmgRequest);
+    //         SendData(networkStream , jsonDataToSend);
+    //     }
+    // }
 
     protected override void Death()
     {

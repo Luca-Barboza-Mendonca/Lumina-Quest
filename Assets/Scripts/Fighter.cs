@@ -1,6 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
+using System.Net.Sockets;
+using System.Text;
+using System;
 
 public class Fighter : MonoBehaviour
 {
@@ -29,11 +33,32 @@ public class Fighter : MonoBehaviour
                     hitpoint = 0;
                     Death();
                 }
+                if (this.GetType() == typeof(ForeignPlayer))
+                {
+                    
+                    ForeignPlayer foreignInstance = (ForeignPlayer)this;
+                    var socket = foreignInstance.socketManager.socket;
+                    var networkStream = socket.GetStream();
+                    DamageRequest newdmgRequest = new DamageRequest();
+                    newdmgRequest.hitpoints = this.hitpoint;
+                    Debug.Log($"Sending Damage Request: {this.hitpoint}");
+                    newdmgRequest.request = "damage";
+                    newdmgRequest.id = foreignInstance.playerId;
+
+                    var jsonDataToSend = JsonUtility.ToJson(newdmgRequest);
+                    SendData(networkStream , jsonDataToSend);
+                }
             }
         }
     }
 
     protected virtual void Death(){
 
+    }
+
+    static void SendData(NetworkStream networkStream, string data)
+    {
+        byte[] dataBytes = Encoding.UTF8.GetBytes(data);
+        networkStream.Write(dataBytes, 0, dataBytes.Length);
     }
 }

@@ -23,7 +23,7 @@ public class SocketManager : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
         string serverAddress = "localhost";
-        int serverPort = 65451;
+        int serverPort = 65456;
 
         
 
@@ -115,10 +115,11 @@ public class SocketManager : MonoBehaviour
                 int fplayerSwing = Convert.ToInt32(dataForPlayer["swing"]);
                 // Debug.Log($"Player {playerId} is at X: {xPos} Y: {yPos}");
                 int playerIndex = gameManager.FindPlayerComponentById(playerId);
+                    
 
                 if (playerId == playerDataSocket.id)
                 {
-                    Debug.Log($"Updating host hitpoints to {fplayerhitpoint}");
+                    // Debug.Log($"Updating host hitpoints to {fplayerhitpoint}");
                     if (counter%5 == 0)
                     {
                         player.hitpoint = fplayerhitpoint;
