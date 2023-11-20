@@ -11,6 +11,7 @@ using System.Linq;
 public class SocketManager : MonoBehaviour
 {
     public TcpClient socket;
+    public int serverPort = 65461;
     public player player;
     public GameManager gameManager;
     public PlayerData playerDataSocket;
@@ -23,7 +24,7 @@ public class SocketManager : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
         string serverAddress = "localhost";
-        int serverPort = 65456;
+        // int serverPort = 65461;
 
         
 
@@ -49,6 +50,7 @@ public class SocketManager : MonoBehaviour
         playerDataSocket.request = "playerdata";
         playerDataSocket.xPos = player.transform.position.x;
         playerDataSocket.yPos = player.transform.position.y;
+        playerDataSocket.xlocalScale = player.transform.localScale.x;
         playerDataSocket.pesos = gameManager.pesos;
         playerDataSocket.experience = gameManager.experience;
         playerDataSocket.weaponLevel = gameManager.weapon.weaponLevel;
@@ -80,11 +82,11 @@ public class SocketManager : MonoBehaviour
             playerDataSocket.request = "playerdata";
             playerDataSocket.xPos = player.transform.position.x;
             playerDataSocket.yPos = player.transform.position.y;
+            playerDataSocket.xlocalScale = player.transform.localScale.x;
             playerDataSocket.pesos = gameManager.pesos;
             playerDataSocket.experience = gameManager.experience;
             playerDataSocket.weaponLevel = gameManager.weapon.weaponLevel;
             playerDataSocket.hitpoints = player.hitpoint;
-              
             playerDataSocket.isAlive = player.isAlive;
             playerDataSocket.swing = swing;
 
@@ -96,7 +98,7 @@ public class SocketManager : MonoBehaviour
             string playerDataJSON = JsonUtility.ToJson(playerDataSocket);
             var networkStream = socket.GetStream();
             
-            if (counter%10 == 0)
+            if (counter%100 == 0)
             {
                 swing = 0;
             }
@@ -109,6 +111,14 @@ public class SocketManager : MonoBehaviour
                 string playerId = dataForPlayer["id"].ToString();
                 float xPos = Convert.ToSingle(dataForPlayer["xPos"]);
                 float yPos = Convert.ToSingle(dataForPlayer["yPos"]);
+                float fplayerXLocalScale = 1;
+                try{
+                    fplayerXLocalScale = Convert.ToSingle(dataForPlayer["xlocalScale"]);
+                } catch(Exception ex){
+                    Debug.Log(ex);
+                }
+                    
+                
                 int fplayerIsAlive = Convert.ToInt32(dataForPlayer["isAlive"]);
                 int fplayerhitpoint = Convert.ToInt32(dataForPlayer["hitpoints"]);
                 int fplayerweapon = Convert.ToInt32(dataForPlayer["weaponLevel"]);
@@ -152,6 +162,7 @@ public class SocketManager : MonoBehaviour
                     ForeignPlayer fplayercomponent = gameManager.foreignPlayers[playerIndex].fPlayer.GetComponent<ForeignPlayer>();
                     if (fplayercomponent.isAlive == 1){
                         gameManager.foreignPlayers[playerIndex].fPlayer.GetComponent<Transform>().position = new Vector3(xPos, yPos, 0);
+                        gameManager.foreignPlayers[playerIndex].fPlayer.GetComponent<Transform>().localScale = new Vector3(fplayerXLocalScale, 1, 1);
                         fplayercomponent.isAlive = fplayerIsAlive;
                         fplayercomponent.hitpoint = fplayerhitpoint;
                         fplayercomponent.foreignPlayerWeapon.SetWeaponLevel(fplayerweapon); 
@@ -182,7 +193,7 @@ public class SocketManager : MonoBehaviour
     {
         try
         {
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[10000];
             int bytesRead = networkStream.Read(buffer, 0, buffer.Length);
 
             if (bytesRead > 0)

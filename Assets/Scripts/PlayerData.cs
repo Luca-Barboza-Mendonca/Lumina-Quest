@@ -9,6 +9,7 @@ public struct PlayerData
     public string id;
     public float xPos;
     public float yPos;
+    public float xlocalScale;
     public double timestamp;
     // Remember to actually implement all of the above
     public int pesos;

@@ -36,7 +36,7 @@ public class ForeignPlayerWeapon : Collidable
     protected override void OnCollide(Collider2D coll)
     {
         if (coll.tag == "Fighter"){
-            if (coll.name == "Player"){
+            if (coll.name == "ForeignPlayer(Clone)"){
                 return;
             }
             

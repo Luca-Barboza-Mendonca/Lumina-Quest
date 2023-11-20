@@ -151,6 +151,7 @@ MonoBehaviour:
   isImmune: 0
   ySpeed: 0.75
   xSpeed: 1
+  socketManager: {fileID: 0}
   playerId: 
   isAlive: 0
   foreignPlayerWeapon: {fileID: 5647715006036618062}
@@ -401,7 +402,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8557754009432202862, guid: a89c2979bcdbb3c498018842e0ba2f2c, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
