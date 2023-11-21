@@ -11,7 +11,7 @@ using System.Linq;
 public class SocketManager : MonoBehaviour
 {
     public TcpClient socket;
-    public int serverPort = 60200;
+    public int serverPort;
     public player player;
     public GameManager gameManager;
     public PlayerData playerDataSocket;
@@ -22,6 +22,7 @@ public class SocketManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        serverPort = Int32.Parse(GameObject.Find("PortData").GetComponent<ReadInput>().input);
         DontDestroyOnLoad(gameObject);
         string serverAddress = "localhost";
         // int serverPort = 65461;

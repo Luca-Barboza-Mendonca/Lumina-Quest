@@ -11,7 +11,7 @@ public class ReadInput : MonoBehaviour
 
     TcpClient client;
     NetworkStream NetStream;
-    private string input = "8888";
+    public string input = "8888";
     // Start is called before the first frame update
     void Awake()
     {
@@ -60,7 +60,8 @@ public class ReadInput : MonoBehaviour
     public void ConnectToSession(){
         // Change scene and set the SocketManager port
         UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
-        GameObject.Find("SocketManager").GetComponent<SocketManager>().serverPort = Int32.Parse(input);
+        // GameObject.Find("SocketManager").GetComponent<SocketManager>().serverPort = Int32.Parse(input);
+        //
     }
 
     static void SendMessage(NetworkStream stream, string message)
