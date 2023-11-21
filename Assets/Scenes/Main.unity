@@ -763,6 +763,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c12e727e944a5844d9b24fe6442d07ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serverPort: 60200
   player: {fileID: 761353503}
   gameManager: {fileID: 558811094}
   foreign_player: {fileID: 3581843333965474085, guid: 8ada33d73ff33874aaad41353306d424, type: 3}
@@ -1367,7 +1368,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &512893386
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4968,7 +4969,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &688092729
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5311,7 +5312,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &745154591
 RectTransform:
   m_ObjectHideFlags: 0

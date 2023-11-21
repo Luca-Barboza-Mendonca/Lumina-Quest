@@ -16,8 +16,8 @@ public class ReadInput : MonoBehaviour
     void Awake()
     {
         DontDestroyOnLoad(gameObject);
-        client = new TcpClient("localhost", 50000);
-        NetStream = client.GetStream();
+        // client = new TcpClient("localhost", 50000);
+        // NetStream = client.GetStream();
 
     }
 
@@ -25,6 +25,15 @@ public class ReadInput : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void SetMainServerPort(string s){
+        try{
+            client = new TcpClient("localhost", 50000);
+            NetStream = client.GetStream();
+        } catch(Exception ex){
+            Debug.Log(ex);
+        }
     }
 
     public void ReadStringInput(string s){
@@ -43,6 +52,15 @@ public class ReadInput : MonoBehaviour
     public void HostNewSession(){
         Debug.Log("Sending message to server");
         SendMessage(NetStream, input);
+        string receivedMessage;
+        receivedMessage = ReceiveMessage(NetStream);
+        Debug.Log($"Return from server: {receivedMessage}");
+    }
+
+    public void ConnectToSession(){
+        // Change scene and set the SocketManager port
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
+        GameObject.Find("SocketManager").GetComponent<SocketManager>().serverPort = Int32.Parse(input);
     }
 
     static void SendMessage(NetworkStream stream, string message)

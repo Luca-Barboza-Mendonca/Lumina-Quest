@@ -11,7 +11,7 @@ using System.Linq;
 public class SocketManager : MonoBehaviour
 {
     public TcpClient socket;
-    public int serverPort = 65461;
+    public int serverPort = 60200;
     public player player;
     public GameManager gameManager;
     public PlayerData playerDataSocket;
