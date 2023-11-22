@@ -18,7 +18,7 @@ public class player : Mover
             UpdateMotor(new Vector3(x, y, 0));
     }
 
-    protected override void Death(){
+    public override void Death(){
         // kill the player
         isAlive = 0;
         isImmune = true;

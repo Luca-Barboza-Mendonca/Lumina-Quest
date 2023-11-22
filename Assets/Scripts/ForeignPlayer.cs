@@ -44,7 +44,7 @@ public class ForeignPlayer : Mover
     //     }
     // }
 
-    protected override void Death()
+    public override void Death()
     {
         isAlive = 0;
     }

@@ -99,7 +99,7 @@ public class SocketManager : MonoBehaviour
             string playerDataJSON = JsonUtility.ToJson(playerDataSocket);
             var networkStream = socket.GetStream();
             
-            if (counter%100 == 0)
+            if (counter%50 == 0)
             {
                 swing = 0;
             }
@@ -130,13 +130,14 @@ public class SocketManager : MonoBehaviour
 
                 if (playerId == playerDataSocket.id)
                 {
-                    // Debug.Log($"Updating host hitpoints to {fplayerhitpoint}");
                     if (counter%5 == 0)
                     {
                         player.hitpoint = fplayerhitpoint;
+                        if (player.hitpoint <= 0){
+                            player.Death();
+                        }
                     }
                     
-                    // Doesn't work for some reason
                     continue;
                 }
 

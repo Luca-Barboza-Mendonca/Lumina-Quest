@@ -12,6 +12,8 @@ public class ReadInput : MonoBehaviour
     TcpClient client;
     NetworkStream NetStream;
     public string input = "8888";
+    public int chatPort = 8888;
+    private bool connected = false;
     // Start is called before the first frame update
     void Awake()
     {
@@ -27,12 +29,28 @@ public class ReadInput : MonoBehaviour
         
     }
 
-    public void SetMainServerPort(string s){
+    public void ReadMainServerPort(string s){
+        Debug.Log(s);
+        int portNumber;
+        if (connected == false){
         try{
-            client = new TcpClient("localhost", 50000);
+            portNumber = Int32.Parse(s);
+            client = new TcpClient("localhost", portNumber);
+            Debug.Log("Connected to Main Server");
             NetStream = client.GetStream();
+            connected = true;
+            try{
+                string connectionMessage = ReceiveMessage(NetStream);
+                chatPort = Int32.Parse(connectionMessage);
+                Debug.Log($"Chat Port Received From Server: {chatPort}");
+            } catch(Exception ex){
+                Debug.Log(ex);
+            }
+                
+
         } catch(Exception ex){
             Debug.Log(ex);
+        }
         }
     }
 

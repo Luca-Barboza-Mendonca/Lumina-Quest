@@ -52,7 +52,7 @@ public class Fighter : MonoBehaviour
         }
     }
 
-    protected virtual void Death(){
+    public virtual void Death(){
 
     }
 
