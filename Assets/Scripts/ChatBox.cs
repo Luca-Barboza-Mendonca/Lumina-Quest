@@ -6,34 +6,30 @@ using System.Text;
 using System;
 using UnityEngine.UI;
 using TMPro;
+using System.Net;
 
 public class ChatBox : MonoBehaviour
 {
 
-    TcpClient client;
-    NetworkStream NetStream;
+    UdpClient client;
+    IPEndPoint serverEndPoint;
     int chatPort;
     string chatContent = "Begin Chat";
     int kChars = 700;
-    string receivedContent = "";
     public TMP_InputField chatInputBox;
     int chatUpdateTimer = 0;
     public Text chat;
-
-    Vector2 scrollPosition;
-
-
-    const int margin = 20;
-
-	Rect windowRect = new Rect(margin, margin, (Screen.width - (margin * 2) )/ 4, (Screen.height - (margin * 2))/ 4);
-	Rect titleBarRect = new Rect(0, 0, 10000, 20);
+    
     // Start is called before the first frame update
     void Start()
     {
         chatPort = GameObject.Find("PortData").GetComponent<ReadInput>().chatPort;
-        
-        client = new TcpClient("localhost", chatPort);
-        NetStream = client.GetStream();
+        chatUpdateTimer = 0;
+        client = new UdpClient(chatPort);
+        IPAddress remoteAddress = IPAddress.Parse("127.0.0.1");
+        serverEndPoint = new IPEndPoint(remoteAddress, chatPort);
+
+        chat.text = chatContent;
     }
 
     // Update is called once per frame
@@ -41,46 +37,60 @@ public class ChatBox : MonoBehaviour
     {
         // Add some stuff to chatContent
         
-        if (chatUpdateTimer >= 300){
+        if (chatUpdateTimer >= 700){
             // The lines below causes the game to lag a lot
-            SendMessage(NetStream, "");
-            receivedContent = ReceiveMessage(NetStream);
-            Debug.Log(receivedContent);
+            SendMessage(client, serverEndPoint, "");
+            chatContent = ReceiveMessage(client, serverEndPoint);
+            chat.text = chatContent;
             chatUpdateTimer = 0;
 
             if (chatContent.Length > kChars) { chatContent = chatContent.Substring(chatContent.Length - kChars); }
         }
-
-        chatContent = receivedContent;
 
         chatUpdateTimer ++;
     }
 
 
     public void SendChatMessage(string s){
-        SendMessage(NetStream, s);
+        SendMessage(client, serverEndPoint, s);
         chatInputBox.text = "";
     }
 
-    static void SendMessage(NetworkStream stream, string message)
+    static void SendMessage(UdpClient clientsock, IPEndPoint server, string message)
     {
-        byte[] header = BitConverter.GetBytes(message.Length);
-        stream.Write(header, 0, header.Length);
-
         byte[] data = Encoding.UTF8.GetBytes(message);
-        stream.Write(data, 0, data.Length);
+        byte[] header = BitConverter.GetBytes(message.Length);
+        byte[] dataToSend = new byte[header.Length + data.Length];
+
+        Buffer.BlockCopy(header, 0, dataToSend, 0, header.Length);
+        Buffer.BlockCopy(data, 0, dataToSend, header.Length, data.Length);
+
+        Debug.Log(Encoding.UTF8.GetString(data));
+        clientsock.Send(dataToSend, dataToSend.Length, server);
     }
 
-    static string ReceiveMessage(NetworkStream stream)
+    static string ReceiveMessage(UdpClient clientsock, IPEndPoint server)
     {
-        byte[] headerBytes = new byte[4];
-        stream.Read(headerBytes, 0, 4);
-        int messageLength = BitConverter.ToInt32(headerBytes, 0);
+        try {
+            clientsock.Client.ReceiveTimeout = 50;
 
-        byte[] dataBytes = new byte[messageLength];
-        stream.Read(dataBytes, 0, messageLength);
-        string message = Encoding.UTF8.GetString(dataBytes);
+            byte[] receivedBytes = clientsock.Receive(ref server);
+            byte[] header = new byte[4];
+            byte[] message = new byte[receivedBytes.Length - 4];
+            Array.Copy(receivedBytes, header, 4);
+            Array.Copy(receivedBytes, 4, message, 0, receivedBytes.Length - 4);
 
-        return message;
+            // Extract the message length from the header
+            int messageLength = BitConverter.ToInt32(header);
+                
+            // Extract the actual message
+            string receivedMessage = Encoding.UTF8.GetString(message);
+
+            return receivedMessage;
+        } catch (SocketException ex){
+            Debug.Log(ex.SocketErrorCode);
+            return "";
+        }
+        
     }
 }
