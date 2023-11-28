@@ -99,7 +99,7 @@ public class SocketManager : MonoBehaviour
             string playerDataJSON = JsonUtility.ToJson(playerDataSocket);
             var networkStream = socket.GetStream();
             
-            if (counter%50 == 0)
+            if (counter%20 == 0)
             {
                 swing = 0;
             }

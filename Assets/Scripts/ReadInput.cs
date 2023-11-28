@@ -6,6 +6,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 
+
 public class ReadInput : MonoBehaviour
 {   
 
@@ -45,6 +46,7 @@ public class ReadInput : MonoBehaviour
                 Debug.Log($"Chat Port Received From Server: {chatPort}");
             } catch(Exception ex){
                 Debug.Log(ex);
+                return;
             }
                 
 

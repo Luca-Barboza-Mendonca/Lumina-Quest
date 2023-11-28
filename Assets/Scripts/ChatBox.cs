@@ -7,27 +7,49 @@ using System;
 using UnityEngine.UI;
 using TMPro;
 using System.Net;
+using System.Threading;
+
+struct ChatMessage {
+    public string data;
+};
+
 
 public class ChatBox : MonoBehaviour
 {
 
-    UdpClient client;
-    IPEndPoint serverEndPoint;
+    TcpClient client;
+    static NetworkStream NetStream;
+
+    static TcpClient logClient;
+
+    static NetworkStream logStream;
+    // UdpClient logClient;
+    // IPEndPoint logServerEndPoint;
     int chatPort;
-    string chatContent = "Begin Chat";
+    static string chatContent = "Begin Chat";
     int kChars = 700;
     public TMP_InputField chatInputBox;
     int chatUpdateTimer = 0;
     public Text chat;
+    Thread logThread;
     
     // Start is called before the first frame update
     void Start()
     {
         chatPort = GameObject.Find("PortData").GetComponent<ReadInput>().chatPort;
         chatUpdateTimer = 0;
-        client = new UdpClient(chatPort);
-        IPAddress remoteAddress = IPAddress.Parse("127.0.0.1");
-        serverEndPoint = new IPEndPoint(remoteAddress, chatPort);
+        client = new TcpClient("127.0.0.1", chatPort);
+        NetStream = client.GetStream();
+
+        // logClient = new TcpClient("127.0.0.1", 50002);
+        // logStream = logClient.GetStream();
+
+        logThread = new Thread(new ThreadStart(ReceiverThread));
+        logThread.Start();
+
+        // logClient = new UdpClient();
+        // logServerEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50002);
+        // logClient.Client.Bind(logServerEndPoint);
 
         chat.text = chatContent;
     }
@@ -37,10 +59,8 @@ public class ChatBox : MonoBehaviour
     {
         // Add some stuff to chatContent
         
-        if (chatUpdateTimer >= 700){
+        if (chatUpdateTimer >= 300){
             // The lines below causes the game to lag a lot
-            SendMessage(client, serverEndPoint, "");
-            chatContent = ReceiveMessage(client, serverEndPoint);
             chat.text = chatContent;
             chatUpdateTimer = 0;
 
@@ -52,45 +72,47 @@ public class ChatBox : MonoBehaviour
 
 
     public void SendChatMessage(string s){
-        SendMessage(client, serverEndPoint, s);
+        SendMessage(NetStream, s);
         chatInputBox.text = "";
     }
 
-    static void SendMessage(UdpClient clientsock, IPEndPoint server, string message)
+    static void SendMessage(NetworkStream stream, string message)
     {
-        byte[] data = Encoding.UTF8.GetBytes(message);
         byte[] header = BitConverter.GetBytes(message.Length);
-        byte[] dataToSend = new byte[header.Length + data.Length];
+        stream.Write(header, 0, header.Length);
 
-        Buffer.BlockCopy(header, 0, dataToSend, 0, header.Length);
-        Buffer.BlockCopy(data, 0, dataToSend, header.Length, data.Length);
-
-        Debug.Log(Encoding.UTF8.GetString(data));
-        clientsock.Send(dataToSend, dataToSend.Length, server);
+        byte[] data = Encoding.UTF8.GetBytes(message);
+        stream.Write(data, 0, data.Length);
     }
 
-    static string ReceiveMessage(UdpClient clientsock, IPEndPoint server)
+    static void ReceiverThread()
     {
-        try {
-            clientsock.Client.ReceiveTimeout = 50;
 
-            byte[] receivedBytes = clientsock.Receive(ref server);
-            byte[] header = new byte[4];
-            byte[] message = new byte[receivedBytes.Length - 4];
-            Array.Copy(receivedBytes, header, 4);
-            Array.Copy(receivedBytes, 4, message, 0, receivedBytes.Length - 4);
+        byte[] buffer = new byte[4096];
 
-            // Extract the message length from the header
-            int messageLength = BitConverter.ToInt32(header);
-                
-            // Extract the actual message
-            string receivedMessage = Encoding.UTF8.GetString(message);
+        while (true)
+        {
+            int bytesRead = 0;
+            try{
+                bytesRead = NetStream.Read(buffer, 0, buffer.Length); // hangs here forever
+            } catch (SocketException ex)
+            {
+                Thread.Sleep(100);
+                continue;
+            }
+            
 
-            return receivedMessage;
-        } catch (SocketException ex){
-            Debug.Log(ex.SocketErrorCode);
-            return "";
+            if (bytesRead == 0)
+            {
+                Debug.Log("No bytes");
+                continue;
+            }
+
+            string dataReceived = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+            Debug.Log(dataReceived);
+            chatContent = dataReceived;
+            
+            
         }
-        
     }
 }
