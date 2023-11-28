@@ -215,6 +215,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chatInputBox: {fileID: 1121233684}
   chat: {fileID: 2052782091}
+  socketManager: {fileID: 289895692}
 --- !u!1 &36719105
 GameObject:
   m_ObjectHideFlags: 0

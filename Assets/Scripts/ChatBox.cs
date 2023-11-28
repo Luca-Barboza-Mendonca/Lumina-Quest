@@ -28,10 +28,13 @@ public class ChatBox : MonoBehaviour
     int chatPort;
     static string chatContent = "Begin Chat";
     int kChars = 700;
-    public TMP_InputField chatInputBox;
-    int chatUpdateTimer = 0;
-    public Text chat;
     Thread logThread;
+    int chatUpdateTimer = 0;
+    string playerId;
+    public TMP_InputField chatInputBox;
+    public Text chat;
+    public SocketManager socketManager;
+    
     
     // Start is called before the first frame update
     void Start()
@@ -41,15 +44,10 @@ public class ChatBox : MonoBehaviour
         client = new TcpClient("127.0.0.1", chatPort);
         NetStream = client.GetStream();
 
-        // logClient = new TcpClient("127.0.0.1", 50002);
-        // logStream = logClient.GetStream();
-
         logThread = new Thread(new ThreadStart(ReceiverThread));
         logThread.Start();
 
-        // logClient = new UdpClient();
-        // logServerEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50002);
-        // logClient.Client.Bind(logServerEndPoint);
+        playerId = socketManager.playerDataSocket.id;
 
         chat.text = chatContent;
     }
@@ -72,7 +70,7 @@ public class ChatBox : MonoBehaviour
 
 
     public void SendChatMessage(string s){
-        SendMessage(NetStream, s);
+        SendMessage(NetStream, "Player " + playerId + ": " + s);
         chatInputBox.text = "";
     }
 
