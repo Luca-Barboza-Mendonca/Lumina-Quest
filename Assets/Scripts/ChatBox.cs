@@ -25,7 +25,7 @@ public class ChatBox : MonoBehaviour
     static NetworkStream logStream;
     // UdpClient logClient;
     // IPEndPoint logServerEndPoint;
-    int chatPort;
+    public int chatPort;
     static string chatContent = "Begin Chat";
     int kChars = 700;
     Thread logThread;
@@ -39,7 +39,7 @@ public class ChatBox : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        chatPort = GameObject.Find("PortData").GetComponent<ReadInput>().chatPort;
+        // chatPort = GameObject.Find("PortData").GetComponent<ReadInput>().chatPort;
         chatUpdateTimer = 0;
         client = new TcpClient("127.0.0.1", chatPort);
         NetStream = client.GetStream();

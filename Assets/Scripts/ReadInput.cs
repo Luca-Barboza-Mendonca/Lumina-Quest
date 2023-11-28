@@ -42,8 +42,7 @@ public class ReadInput : MonoBehaviour
             connected = true;
             try{
                 string connectionMessage = ReceiveMessage(NetStream);
-                chatPort = Int32.Parse(connectionMessage);
-                Debug.Log($"Chat Port Received From Server: {chatPort}");
+                Debug.Log($"Output received from server: {connectionMessage}");
             } catch(Exception ex){
                 Debug.Log(ex);
                 return;
@@ -74,7 +73,7 @@ public class ReadInput : MonoBehaviour
         SendMessage(NetStream, input);
         string receivedMessage;
         receivedMessage = ReceiveMessage(NetStream);
-        Debug.Log($"Return from server: {receivedMessage}");
+        // chatPort = Int32.Parse(receivedMessage);
     }
 
     public void ConnectToSession(){

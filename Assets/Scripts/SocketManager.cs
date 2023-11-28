@@ -16,6 +16,7 @@ public class SocketManager : MonoBehaviour
     public GameManager gameManager;
     public PlayerData playerDataSocket;
     public GameObject foreign_player;
+    public ChatBox chatBox;
     public int swing = 0;
     public int counter = 0;
     public int reviving = 0;
@@ -39,8 +40,12 @@ public class SocketManager : MonoBehaviour
         string receivedData = ReceiveData(networkStream);
         if (receivedData.StartsWith("id_", StringComparison.OrdinalIgnoreCase))
         {
-            const string prefix = "id_";
-            string clientId = receivedData.Substring(prefix.Length);
+            // const string prefix = "id_";
+            string[] data = receivedData.Split("_");
+            string clientId = data[1];
+            int chatport = Int32.Parse(data[2]);
+
+            chatBox.chatPort = chatport;
             playerDataSocket.id = clientId;
         }
         Debug.Log($"Received data from server: {receivedData}");

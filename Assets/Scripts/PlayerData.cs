@@ -11,7 +11,6 @@ public struct PlayerData
     public float yPos;
     public float xlocalScale;
     public double timestamp;
-    // Remember to actually implement all of the above
     public int pesos;
     public int experience;
     public int weaponLevel;

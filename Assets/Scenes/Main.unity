@@ -213,6 +213,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c540d0c07568b449a56d10af9899916, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  chatPort: 0
   chatInputBox: {fileID: 1121233684}
   chat: {fileID: 2052782091}
   socketManager: {fileID: 289895692}
@@ -1048,6 +1049,7 @@ MonoBehaviour:
   player: {fileID: 761353503}
   gameManager: {fileID: 558811094}
   foreign_player: {fileID: 3581843333965474085, guid: 8ada33d73ff33874aaad41353306d424, type: 3}
+  chatBox: {fileID: 15529789}
   swing: 0
   counter: 0
   reviving: 0
