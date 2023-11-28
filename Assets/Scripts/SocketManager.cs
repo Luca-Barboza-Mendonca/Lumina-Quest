@@ -18,6 +18,7 @@ public class SocketManager : MonoBehaviour
     public GameObject foreign_player;
     public int swing = 0;
     public int counter = 0;
+    public int reviving = 0;
 
     // Start is called before the first frame update
     void Awake()
@@ -99,8 +100,9 @@ public class SocketManager : MonoBehaviour
             string playerDataJSON = JsonUtility.ToJson(playerDataSocket);
             var networkStream = socket.GetStream();
             
-            if (counter%20 == 0)
+            if (counter%5 == 0)
             {
+                // Very rough solution, could use more work
                 swing = 0;
             }
                 
@@ -128,14 +130,20 @@ public class SocketManager : MonoBehaviour
                 int playerIndex = gameManager.FindPlayerComponentById(playerId);
                     
 
+
+                // This cluster of conditionals basically ensures proper health sincronization with the server,
+                // allowing the player to die and revive
                 if (playerId == playerDataSocket.id)
                 {
                     if (counter%5 == 0)
                     {
-                        player.hitpoint = fplayerhitpoint;
-                        if (player.hitpoint <= 0){
-                            player.Death();
+                        if (reviving == 0){
+                            player.hitpoint = fplayerhitpoint;
+                            if (player.hitpoint <= 0){
+                                player.Death();
                         }
+                        }
+                        
                     }
                     
                     continue;
@@ -167,6 +175,9 @@ public class SocketManager : MonoBehaviour
                         gameManager.foreignPlayers[playerIndex].fPlayer.GetComponent<Transform>().localScale = new Vector3(fplayerXLocalScale, 1, 1);
                         fplayercomponent.isAlive = fplayerIsAlive;
                         fplayercomponent.hitpoint = fplayerhitpoint;
+                        if (fplayerhitpoint <=0){
+                            fplayercomponent.Death();
+                        }
                         fplayercomponent.foreignPlayerWeapon.SetWeaponLevel(fplayerweapon); 
                         if (fplayerSwing == 1)
                         {
@@ -181,6 +192,10 @@ public class SocketManager : MonoBehaviour
                 }
             }
             SendData(networkStream, playerDataJSON);
+            if (counter%60 == 0){
+                reviving = 0;
+            }
+            
         }
         counter++;
     }

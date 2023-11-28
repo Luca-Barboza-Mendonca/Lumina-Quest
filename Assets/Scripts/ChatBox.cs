@@ -58,7 +58,7 @@ public class ChatBox : MonoBehaviour
         // Add some stuff to chatContent
         
         if (chatUpdateTimer >= 300){
-            // The lines below causes the game to lag a lot
+            SendMessage(NetStream, "update");
             chat.text = chatContent;
             chatUpdateTimer = 0;
 

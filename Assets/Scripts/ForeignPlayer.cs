@@ -8,7 +8,7 @@ using System;
 
 public class ForeignPlayer : Mover
 {
-
+    public GameManager gameManager;
     public SocketManager socketManager;
     public string playerId;
     public int isAlive;
@@ -20,6 +20,7 @@ public class ForeignPlayer : Mover
         isAlive = 1;
         DontDestroyOnLoad(gameObject);
         socketManager = GameObject.Find("SocketManager").GetComponent<SocketManager>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     // Update is called once per frame
@@ -46,7 +47,10 @@ public class ForeignPlayer : Mover
 
     public override void Death()
     {
-        isAlive = 0;
+        Debug.Log("Destroying foreign player");
+        gameManager.activePlayers.Remove(playerId);
+        gameManager.RemoveForeignPlayer(playerId);
+        Destroy(this.gameObject);
     }
 
     static void SendData(NetworkStream networkStream, string data)

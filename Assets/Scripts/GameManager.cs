@@ -100,7 +100,7 @@ public class GameManager : MonoBehaviour
     // Death Menu and Respawn
     public void Respawn() {
         deathMenuAnim.SetTrigger("Hide");
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Dungeon1");
+        // UnityEngine.SceneManagement.SceneManager.LoadScene("Dungeon1");
         player.Respawn();
 
     }
@@ -181,5 +181,22 @@ public class GameManager : MonoBehaviour
 
 
         player.transform.position = GameObject.Find("SpawnPoint").transform.position;
+    }
+
+    public void RemoveForeignPlayer(string playerId)
+    {
+    // Find the index of the item with the given playerId
+        int index = foreignPlayers.FindIndex(player => player.playerId == playerId);
+
+        // Check if the item was found
+        if (index != -1)
+        {
+            // Remove the item at the found index
+            foreignPlayers.RemoveAt(index);
+        }
+        else
+        {
+            Debug.Log("Tried to remove Foreign Player that doesn't exist");
+        }
     }
 }
